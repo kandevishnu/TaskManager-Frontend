@@ -1,0 +1,4 @@
+/* Hide Edge & IE password reveal icon */
+input[type="password"]::-ms-reveal {
+  display: none;
+}
