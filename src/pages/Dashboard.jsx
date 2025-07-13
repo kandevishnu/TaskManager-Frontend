@@ -73,22 +73,26 @@ const Dashboard = () => {
   const COLORS = ["#a78bfa", "#38bdf8", "#34d399"];
   const PRIORITY_COLORS = ["#34d399", "#fbbf24", "#f87171"];
 
-  const handleDeleteAccount = async () => {
-    if (!password) return toast.error("Please enter your password");
-    try {
-      await axios.delete("/user/delete", {
-        data: { password },
-        withCredentials: true,
-      });
-      toast.success("Account deleted successfully");
-      setTimeout(() => {
-        localStorage.removeItem("user");
-        window.location.href = "/";
-      }, 1500);
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete account");
-    }
-  };
+const handleDeleteAccount = async () => {
+  if (!password) return toast.error("Please enter your password");
+
+  try {
+    await axios.delete("/user/delete", {
+      data: { password },
+      withCredentials: true,
+    });
+
+    toast.success("✅ Account deleted successfully", { autoClose: 2000 });
+
+    setTimeout(() => {
+      localStorage.removeItem("user");
+      window.location.href = "/";
+    }, 2500); // give toast time to show before redirect
+  } catch (err) {
+    toast.error(err.response?.data?.message || "❌ Failed to delete account");
+  }
+};
+
 
   return (
     <div className="w-full">
@@ -211,13 +215,13 @@ const Dashboard = () => {
             <div className="flex gap-4 flex-wrap">
               <button
                 onClick={handleDeleteAccount}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 cursor-pointer"
               >
                 Confirm Delete
               </button>
               <button
                 onClick={() => setShowDelete(false)}
-                className="bg-gray-300 px-4 py-2 rounded"
+                className="bg-gray-300 px-4 py-2 rounded cursor-pointer"
               >
                 Cancel
               </button>
