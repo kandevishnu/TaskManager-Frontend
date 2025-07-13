@@ -1,3 +1,5 @@
+// ✅ Final cleaned Login.jsx
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/api";
@@ -14,18 +16,9 @@ const Login = () => {
     const storedEmail = localStorage.getItem("prefillEmail");
     if (storedEmail) {
       setEmail(storedEmail);
-      localStorage.removeItem("prefillEmail"); 
+      localStorage.removeItem("prefillEmail");
     }
   }, []);
-
-  <input
-    type="email"
-    autoComplete="off" // ✅ disables browser autofill
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-    placeholder="Email"
-    className="w-full p-3 border border-gray-300 rounded"
-  />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,15 +50,15 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           <input
             type="email"
-            autoComplete="off" // 💡 disable browser autofill
+            autoComplete="off"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             className="w-full p-3 border border-gray-300 rounded"
           />
           <PasswordInput
-            name="password" // ✅ important for hiding saved password
-            autoComplete="new-password" // ✅ strongly recommended for password fields
+            name="password"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
