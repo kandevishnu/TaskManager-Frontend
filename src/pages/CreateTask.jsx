@@ -75,6 +75,7 @@ const CreateTask = () => {
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             required
+            placeholder="Enter task title"
           />
         </div>
 
@@ -87,6 +88,8 @@ const CreateTask = () => {
             rows={4}
             value={form.description}
             onChange={handleChange}
+            required
+            placeholder="Please enter something about your task"
             className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           ></textarea>
         </div>
@@ -118,6 +121,7 @@ const CreateTask = () => {
               value={form.dueDate}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              required
             />
           </div>
         </div>
