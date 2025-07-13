@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
@@ -8,8 +9,6 @@ import Dashboard from "./pages/Dashboard";
 import ManageTasks from "./pages/ManageTasks";
 import CreateTask from "./pages/CreateTask";
 import Layout from "./pages/Layout";
-import "react-toastify/dist/ReactToastify.css";
-import "./App.css"; // Ensure this is imported for global styles
 import TaskDetails from "./pages/TaskDetails";
 import EditTask from "./pages/EditTask";
 
@@ -28,7 +27,16 @@ function App() {
           <Route path="/task/:id/edit" element={<EditTask />} />
         </Route>
       </Routes>
-      <ToastContainer position="top-right" autoClose={3000} />
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </Router>
   );
 }

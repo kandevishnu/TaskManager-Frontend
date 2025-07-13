@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import api from "../utils/api";
 
 const EditTask = () => {
@@ -21,7 +20,7 @@ const EditTask = () => {
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const res = await api.get("/tasks", { withCredentials: true });
+        const res = await api.get("/tasks");
         const found = res.data.tasks.find((t) => t._id === id);
         if (!found) throw new Error("Task not found");
 
@@ -66,8 +65,9 @@ const EditTask = () => {
       return false;
     }
 
-    if (!form.description.trim()) {
-      toast.error("❌ Please enter something about your task");
+    const descWords = form.description.trim().split(/\s+/);
+    if (descWords.length < 3) {
+      toast.error("❌ Description is too short. Enter at least 3 words.");
       return false;
     }
 
@@ -87,7 +87,7 @@ const EditTask = () => {
     if (!validateForm()) return;
 
     try {
-      await api.put(`/tasks/${id}`, form, { withCredentials: true });
+      await api.put(`/tasks/${id}`, form);
       toast.success("✅ Task updated successfully");
       navigate(`/task/${id}`);
     } catch (err) {
@@ -103,6 +103,7 @@ const EditTask = () => {
       <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
         Edit Task
       </h1>
+
       <form
         onSubmit={handleSubmit}
         className="space-y-6 bg-white p-6 rounded-2xl shadow-md border border-gray-200"
@@ -127,6 +128,7 @@ const EditTask = () => {
             className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
+            placeholder="Enter at least 3 words about this task"
           ></textarea>
         </div>
 
@@ -151,7 +153,7 @@ const EditTask = () => {
               type="date"
               className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={form.dueDate}
-              min={new Date().toISOString().split("T")[0]} // prevent past dates
+              min={new Date().toISOString().split("T")[0]} // Today min
               onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
             />
           </div>
@@ -208,9 +210,6 @@ const EditTask = () => {
           Update Task
         </button>
       </form>
-
-      {/* Toast Container */}
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
