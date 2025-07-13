@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import api from "../utils/api";
 
 const EditTask = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     title: "",
@@ -25,7 +25,6 @@ const EditTask = () => {
         const found = res.data.tasks.find((t) => t._id === id);
         if (!found) throw new Error("Task not found");
 
-        setTask(found);
         setForm({
           title: found.title,
           description: found.description,
@@ -41,11 +40,11 @@ const EditTask = () => {
       }
     };
     fetchTask();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleChecklistChange = (index, field, value) => {
     const updated = [...form.checklist];
-    updated[index][field] = field === "done" ? value : value; // Keep spacing in text
+    updated[index][field] = value;
     setForm({ ...form, checklist: updated });
   };
 
@@ -61,8 +60,32 @@ const EditTask = () => {
     setForm({ ...form, checklist: updated });
   };
 
+  const validateForm = () => {
+    if (form.title.trim().length < 3) {
+      toast.error("❌ Title must be at least 3 characters");
+      return false;
+    }
+
+    if (!form.description.trim()) {
+      toast.error("❌ Please enter something about your task");
+      return false;
+    }
+
+    const today = new Date();
+    const due = new Date(form.dueDate);
+    today.setHours(0, 0, 0, 0);
+    if (due < today) {
+      toast.error("❌ Due date cannot be in the past");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     try {
       await api.put(`/tasks/${id}`, form, { withCredentials: true });
       toast.success("✅ Task updated successfully");
@@ -98,9 +121,7 @@ const EditTask = () => {
 
         {/* Description */}
         <div>
-          <label className="block font-semibold text-gray-700 mb-2">
-            Description
-          </label>
+          <label className="block font-semibold text-gray-700 mb-2">Description</label>
           <textarea
             rows={3}
             className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -112,9 +133,7 @@ const EditTask = () => {
         {/* Priority & Due Date */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block font-semibold text-gray-700 mb-2">
-              Priority
-            </label>
+            <label className="block font-semibold text-gray-700 mb-2">Priority</label>
             <select
               className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={form.priority}
@@ -127,13 +146,12 @@ const EditTask = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-gray-700 mb-2">
-              Due Date
-            </label>
+            <label className="block font-semibold text-gray-700 mb-2">Due Date</label>
             <input
               type="date"
               className="w-full border px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={form.dueDate}
+              min={new Date().toISOString().split("T")[0]} // prevent past dates
               onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
             />
           </div>
@@ -141,9 +159,7 @@ const EditTask = () => {
 
         {/* Checklist */}
         <div>
-          <label className="block font-semibold text-gray-700 mb-2">
-            Checklist
-          </label>
+          <label className="block font-semibold text-gray-700 mb-2">Checklist</label>
           {form.checklist.map((item, index) => (
             <div
               key={index}
@@ -192,6 +208,9 @@ const EditTask = () => {
           Update Task
         </button>
       </form>
+
+      {/* Toast Container */}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

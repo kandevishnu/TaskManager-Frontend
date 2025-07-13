@@ -34,10 +34,34 @@ const CreateTask = () => {
     }
   };
 
+  const validateForm = () => {
+    if (form.title.trim().length < 3) {
+      toast.error("❌ Title must be at least 3 characters");
+      return false;
+    }
+
+    if (!form.description.trim()) {
+      toast.error("❌ Please enter something about your task");
+      return false;
+    }
+
+    const today = new Date();
+    const due = new Date(form.dueDate);
+    today.setHours(0, 0, 0, 0);
+    if (due < today) {
+      toast.error("❌ Due date cannot be in the past");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
+    if (!validateForm()) return; // validate before sending
+
+    setLoading(true);
     try {
       await api.post("/tasks", form);
       toast.success("✅ Task created successfully");
@@ -56,6 +80,8 @@ const CreateTask = () => {
       setLoading(false);
     }
   };
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md my-8">
@@ -120,6 +146,7 @@ const CreateTask = () => {
               name="dueDate"
               value={form.dueDate}
               onChange={handleChange}
+              min={today}
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               required
             />
